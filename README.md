@@ -1,13 +1,13 @@
 # Skybound: Chronicles of Conquest (Unity 3D RPG Prototype)
 
 ![Unity](https://img.shields.io/badge/Unity-2022.3%20LTS-black)
-![C%23](https://img.shields.io/badge/C%23-.NET-blue)
+![C#](https://img.shields.io/badge/C%23-.NET-blue)
 ![URP](https://img.shields.io/badge/Render%20Pipeline-URP-purple)
 ![Status](https://img.shields.io/badge/Status-Prototype-informational)
 
 A Unity 3D third-person open-world RPG prototype built in C# with a modular gameplay architecture. The project focuses on responsive player movement, melee + archery combat, Cinemachine camera control, animation-driven gameplay, and complex enemy AI implemented using finite state machines.
 
-> **Asset dependency notice:** This repository includes the full Unity project and prefabs, but some prefabs reference third-party Unity Asset Store packages (models/materials/textures/animations/VFX). Due to licensing, those Asset Store packages must be acquired and imported separately after cloning.
+> Asset dependency notice: This repository includes the full Unity project and prefabs, but some prefabs reference third-party Unity Asset Store packages (models/materials/textures/animations/VFX). Due to licensing, those Asset Store packages must be acquired and imported separately after cloning.
 
 ---
 
@@ -39,18 +39,18 @@ A Unity 3D third-person open-world RPG prototype built in C# with a modular game
 
 ### Enemy AI (Finite State Machines)
 - AI behaviours structured using state machines for clarity and scalability
-- Supports layered combat flow design (chase → range check → attack selection → cooldown handling)
+- Supports layered combat flow design (chase -> range check -> attack selection -> cooldown handling)
 - Designed to scale from base enemies to more advanced enemies/bosses
 
 ---
 
 ## Tech Stack
-- **Unity:** 2022.3 LTS (recommended)
-- **Language:** C#
-- **Render Pipeline:** URP (Universal Render Pipeline)
-- **Camera:** Cinemachine
-- **Animation:** Animator / Blend Trees
-- **Movement:** CharacterController
+- Unity: 2022.3 LTS (recommended)
+- Language: C#
+- Render Pipeline: URP (Universal Render Pipeline)
+- Camera: Cinemachine
+- Animation: Animator / Blend Trees
+- Movement: CharacterController
 
 ---
 
@@ -59,7 +59,7 @@ A Unity 3D third-person open-world RPG prototype built in C# with a modular game
 ### Requirements
 - Unity 2022.3 LTS (or close equivalent)
 - Unity Asset Store access (to import required packages)
-- Cinemachine package installed (Unity Package Manager)
+- Cinemachine installed (Unity Package Manager)
 
 ### Setup
 1. Clone the repository:
@@ -68,75 +68,66 @@ A Unity 3D third-person open-world RPG prototype built in C# with a modular game
 
 Open the project in Unity Hub.
 
-Import the required Asset Store packages (listed below):
+Import the required Asset Store packages:
 
-Unity Editor → Window → Package Manager → My Assets
+Unity Editor -> Window -> Package Manager -> My Assets
 
-Download and Import each package
+Download and Import each package listed in "Asset Store Packages Used"
 
 Install/confirm Cinemachine:
 
-Window → Package Manager → Cinemachine
+Window -> Package Manager -> Cinemachine
 
 Open the scene for the Start-Up Screen and press Play.
 
 Controls (Default)
 Movement
 
-W/A/S/D — Move
+W/A/S/D - Move
 
-Mouse — Look / rotate camera
+Mouse - Look / rotate camera
 
-Left Shift — Sprint
+Left Shift - Sprint
 
-Space — Jump
+Space - Jump
 
-Hold Space (while falling) — Glide
+Hold Space (while falling) - Glide
 
-C — Toggle crouch
+C - Toggle crouch
 
-E — Dash (cooldown applied)
+E - Dash (cooldown applied)
 
 Combat / Weapons
 
-1 — Equip melee weapon
+1 - Equip melee weapon
 
-2 — Unequip current weapon
+2 - Unequip current weapon
 
-3 — Equip bow
+3 - Equip bow
 
-Right Mouse Button — Aim
+Right Mouse Button - Aim
 
-Left Mouse Button (while aiming) — Shoot
+Left Mouse Button (while aiming) - Shoot
 
 Project Structure (Core Scripts)
 
-playerInputHandler.cs
-Reads player input (movement axes, sprint/jump/crouch/dash, camera yaw).
+playerInputHandler.cs - Reads player input (movement axes, sprint/jump/crouch/dash, camera yaw).
 
-movementHandler.cs
-CharacterController movement logic (walk/sprint/crouch/jump/glide/dash), grounded checks, movement state updates.
+movementHandler.cs - CharacterController movement logic, grounded checks, movement state updates.
 
-playerStateManager.cs
-Defines movement state enum used across systems.
+playerStateManager.cs - Defines movement state enum used across systems.
 
-playerAnimationController.cs
-Central animation driver: blend tree smoothing + state booleans + optional triggers.
+playerAnimationController.cs - Central animation driver (blend smoothing + state booleans + optional triggers).
 
-combatInputHandler.cs
-Input flags for aim/shoot and combat state signalling.
+combatInputHandler.cs - Input flags for aim/shoot and combat state signalling.
 
-combatController.cs
-Weapon equip/unequip, aiming animation parameters, arrow spawning + force application, and camera switching integration.
+combatController.cs - Weapon equip/unequip, aiming params, arrow spawning + force, camera switching integration.
 
-cameraHandler.cs
-Cinemachine FreeLook priority switching between main and aiming cameras.
+cameraHandler.cs - Cinemachine FreeLook priority switching (main vs aiming).
 
-arrowHandler.cs
-Basic arrow lifecycle logic (cleanup + impact behaviour).
+arrowHandler.cs - Basic arrow lifecycle (cleanup + impact behaviour).
 
 Animator Parameters (Expected)
-
 Floats
 
 xInput
@@ -175,9 +166,9 @@ jumpHeight, gravity, glideGravity
 
 dashSpeed, dashDuration, dashCooldownTime
 
-Ground detection: groundDetectionRadius, groundDetectionHeight, groundLayer
+groundDetectionRadius, groundDetectionHeight, groundLayer
 
-Bow projectile: shootSpeed
+shootSpeed
 
 Asset Store Packages Used
 
@@ -207,8 +198,6 @@ Melee Warrior Animations FREE
 
 Tutorials Referenced
 
-Some gameplay and Unity workflows were informed by the following tutorials:
-
 https://www.youtube.com/watch?v=4HpC--2iowE&t=313s
 
 https://www.youtube.com/watch?v=_J8RPIaO2Lc
@@ -229,8 +218,6 @@ https://www.youtube.com/watch?v=XOjd_qU2Ido&t=900s
 
 https://www.youtube.com/watch?v=BLfNP4Sc_iA&t=496s
 
-https://www.youtube.com/watch?v=78J493q
-
 https://www.youtube.com/watch?v=xWMQIozp6YE
 
 https://www.youtube.com/watch?v=b-WZEBLNCik
@@ -243,9 +230,9 @@ https://www.youtube.com/playlist?list=PLllNmP7eq6TSkwDN8OO0E8S6CWybSE_xC
 
 Troubleshooting
 
-Missing prefabs / missing references: Import the Asset Store packages listed above (Window → Package Manager → My Assets).
+Missing prefabs / missing references: Import the Asset Store packages listed above (Window -> Package Manager -> My Assets).
 
-Pink materials / shaders: Confirm URP is set up correctly for the project and re-import URP-related packages if needed.
+Pink materials / shaders: Confirm URP is set up correctly and re-import URP-related packages if needed.
 
 Cinemachine camera not switching: Ensure both FreeLook cameras are assigned in cameraHandler and priorities are set correctly.
 
@@ -258,6 +245,14 @@ Author / Contact
 Shawn Santan D’Souza
 GitHub: https://github.com/shawn-d123
 
-LinkedIn: www.linkedin.com/in/shawn-dsouza-08b6273b0
+LinkedIn: https://www.linkedin.com/in/shawn-dsouza-08b6273b0
 
 Email: dsouzashawn305@gmail.com
+
+
+### If bullets still don’t paste correctly
+That’s usually because you’re pasting into something like Word/Notes first, or your browser is converting characters.
+
+**Fix:** Paste directly into GitHub’s README editor, or into VS Code, then into GitHub.
+
+If you tell me **where** you’re pasting it (GitHub editor / VS Code / Notepad / Word), I’ll give you the exact fix for that one.
