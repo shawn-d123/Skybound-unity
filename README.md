@@ -1,258 +1,260 @@
-# Skybound: Chronicles of Conquest (Unity 3D RPG Prototype)
+# Skybound: Chronicles of Conquest
 
-![Unity](https://img.shields.io/badge/Unity-2022.3%20LTS-black)
-![C#](https://img.shields.io/badge/C%23-.NET-blue)
+![Unity](https://img.shields.io/badge/Unity-2022.3%20LTS-black?logo=unity)
+![C#](https://img.shields.io/badge/C%23-.NET-blue?logo=csharp)
 ![URP](https://img.shields.io/badge/Render%20Pipeline-URP-purple)
 ![Status](https://img.shields.io/badge/Status-Prototype-informational)
+![License](https://img.shields.io/badge/License-Unlicensed-lightgrey)
 
-A Unity 3D third-person open-world RPG prototype built in C# with a modular gameplay architecture. The project focuses on responsive player movement, melee + archery combat, Cinemachine camera control, animation-driven gameplay, and complex enemy AI implemented using finite state machines.
+A Unity 3D third-person RPG prototype written in C#. The focus of this project was building a clean, modular architecture around player movement, melee and archery combat, Cinemachine camera handling, and enemy AI using finite state machines — less about visual polish, more about getting the systems right.
 
-> Asset dependency notice: This repository includes the full Unity project and prefabs, but some prefabs reference third-party Unity Asset Store packages (models/materials/textures/animations/VFX). Due to licensing, those Asset Store packages must be acquired and imported separately after cloning.
+---
+
+> **Asset Notice:** The repo includes the full Unity project and prefabs, but several prefabs depend on third-party Asset Store packages (models, textures, animations, VFX) that aren't included due to licensing. You'll need to grab those separately — the full list is [below](#asset-store-packages-used).
+
+---
+
+## Table of Contents
+
+- [Features](#features)
+- [Tech Stack](#tech-stack)
+- [Getting Started](#getting-started)
+- [Controls](#controls)
+- [Project Structure](#project-structure)
+- [Animator Parameters](#animator-parameters)
+- [Configuration & Tuning](#configuration--tuning)
+- [Asset Store Packages](#asset-store-packages-used)
+- [Tutorials Referenced](#tutorials-referenced)
+- [Troubleshooting](#troubleshooting)
+- [Author](#author)
 
 ---
 
 ## Features
 
-### Player Movement (CharacterController)
-- Camera-relative 3D movement
+### Player Movement
+Built on Unity's `CharacterController`. Movement is camera-relative with a full state machine tracking what the player is doing at any given time.
+
 - Sprinting, crouching (toggle), jumping
-- Gliding (reduced fall gravity when holding jump)
-- Dash with cooldown + coroutine-driven burst
-- Ground detection via SphereCast
-- Movement state tracking (Idle / Walking / Sprinting / Jumping / Crouching / Gliding / Dashing / Falling)
+- Gliding — hold jump while falling to reduce gravity and extend air time
+- Dash — short burst with a cooldown managed by a coroutine
+- Ground detection via `SphereCast`
+- States: `Idle` / `Walking` / `Sprinting` / `Jumping` / `Crouching` / `Gliding` / `Dashing` / `Falling`
 
 ### Combat
-- Weapon equipping workflow (melee + bow)
-- Aiming mode with camera switching
-- Archery: arrow instantiation + forward impulse
-- Animator parameter control for aiming/shooting states
-- Animation-centric approach (systems designed to be driven by animation events where appropriate)
+- Equip/unequip workflow for both melee and bow
+- Dedicated aiming mode that switches the active Cinemachine camera
+- Arrow instantiation with forward impulse on fire
+- Animator parameters wired to aim and shoot states
+- Systems are designed around animation events where it makes sense — the animator drives behaviour, not the other way around
 
-### Camera (Cinemachine)
-- Cinemachine FreeLook main camera + aiming camera
-- Smooth switching using priority control
+### Camera
+- Cinemachine FreeLook for general play, a separate aiming camera for bow use
+- Switching is handled via priority — no direct camera transitions
 
-### Animation System
-- Blend tree input smoothing for natural transitions
-- Clear animation state flags (jump, fall, glide, dash, sprint, crouch, aim, shoot)
-- Centralised animation updates for consistent behaviour
+### Animation
+- Blend tree input smoothing for natural movement feel
+- Centralised animation controller keeps state flags consistent across systems
+- Clean separation between what triggers an animation and what the animation does
 
-### Enemy AI (Finite State Machines)
-- AI behaviours structured using state machines for clarity and scalability
-- Supports layered combat flow design (chase -> range check -> attack selection -> cooldown handling)
-- Designed to scale from base enemies to more advanced enemies/bosses
+### Enemy AI
+- FSM-based AI — each state is isolated, which makes adding new behaviours straightforward
+- Base flow: `Chase → Range Check → Attack Selection → Cooldown`
+- Built to scale — the same structure handles basic enemies and can be extended for boss logic
 
 ---
 
 ## Tech Stack
-- Unity: 2022.3 LTS (recommended)
-- Language: C#
-- Render Pipeline: URP (Universal Render Pipeline)
-- Camera: Cinemachine
-- Animation: Animator / Blend Trees
-- Movement: CharacterController
+
+| | |
+|---|---|
+| **Engine** | Unity 2022.3 LTS |
+| **Language** | C# |
+| **Render Pipeline** | Universal Render Pipeline (URP) |
+| **Camera** | Cinemachine |
+| **Animation** | Animator + Blend Trees |
+| **Movement** | CharacterController |
 
 ---
 
 ## Getting Started
 
 ### Requirements
-- Unity 2022.3 LTS (or close equivalent)
-- Unity Asset Store access (to import required packages)
-- Cinemachine installed (Unity Package Manager)
+
+- Unity 2022.3 LTS (other versions may work but aren't tested)
+- Unity Asset Store account (for required packages)
+- Cinemachine — install via Package Manager if not already present
 
 ### Setup
-1. Clone the repository:
-   ```bash
-   git clone https://github.com/shawn-d123/Skybound-unity.git
 
-Open the project in Unity Hub.
+**1. Clone the repo**
+```bash
+git clone https://github.com/shawn-d123/Skybound-unity.git
+```
 
-Import the required Asset Store packages:
+**2. Open in Unity Hub**
 
-Unity Editor -> Window -> Package Manager -> My Assets
+Open the cloned folder as an existing project.
 
-Download and Import each package listed in "Asset Store Packages Used"
+**3. Import Asset Store packages**
 
-Install/confirm Cinemachine:
+```
+Window → Package Manager → My Assets
+```
 
-Window -> Package Manager -> Cinemachine
+Download and import everything in the [Asset Store Packages](#asset-store-packages-used) list. Missing these will cause broken prefab references in the scene.
 
-Open the scene for the Start-Up Screen and press Play.
+**4. Check Cinemachine is installed**
 
-Controls (Default)
-Movement
+```
+Window → Package Manager → Cinemachine
+```
 
-W/A/S/D - Move
+**5. Hit Play**
 
-Mouse - Look / rotate camera
+Open the Start-Up Screen scene and press Play.
 
-Left Shift - Sprint
+---
 
-Space - Jump
+## Controls
 
-Hold Space (while falling) - Glide
+### Movement
 
-C - Toggle crouch
+| Input | Action |
+|---|---|
+| `W / A / S / D` | Move |
+| `Mouse` | Look / camera rotation |
+| `Left Shift` | Sprint |
+| `Space` | Jump |
+| `Hold Space` *(airborne)* | Glide |
+| `C` | Toggle crouch |
+| `E` | Dash |
 
-E - Dash (cooldown applied)
+### Combat
 
-Combat / Weapons
+| Input | Action |
+|---|---|
+| `1` | Equip melee weapon |
+| `2` | Unequip |
+| `3` | Equip bow |
+| `RMB` | Aim |
+| `LMB` *(while aiming)* | Shoot |
 
-1 - Equip melee weapon
+---
 
-2 - Unequip current weapon
+## Project Structure
 
-3 - Equip bow
+Core scripts and what they're responsible for:
 
-Right Mouse Button - Aim
+| Script | Role |
+|---|---|
+| `playerInputHandler.cs` | Captures raw input — axes, sprint, jump, crouch, dash, yaw |
+| `movementHandler.cs` | All CharacterController logic, grounded checks, state updates |
+| `playerStateManager.cs` | Defines the movement state enum shared across systems |
+| `playerAnimationController.cs` | Central animation driver — smoothing, booleans, triggers |
+| `combatInputHandler.cs` | Aim/shoot input flags and combat state signalling |
+| `combatController.cs` | Equip logic, aiming params, arrow spawning, camera switching |
+| `cameraHandler.cs` | Cinemachine priority switching between main and aim cameras |
+| `arrowHandler.cs` | Arrow lifecycle — flight, impact, cleanup |
 
-Left Mouse Button (while aiming) - Shoot
+---
 
-Project Structure (Core Scripts)
+## Animator Parameters
 
-playerInputHandler.cs - Reads player input (movement axes, sprint/jump/crouch/dash, camera yaw).
+### Floats
 
-movementHandler.cs - CharacterController movement logic, grounded checks, movement state updates.
+| Parameter | Purpose |
+|---|---|
+| `xInput` | Horizontal input (used for blend tree) |
+| `yInput` | Vertical input (used for blend tree) |
 
-playerStateManager.cs - Defines movement state enum used across systems.
+### Booleans
 
-playerAnimationController.cs - Central animation driver (blend smoothing + state booleans + optional triggers).
+| Parameter | Purpose |
+|---|---|
+| `isCrouching` | Crouch state active |
+| `isJumping` | Jump initiated |
+| `isFalling` | Player is in freefall |
+| `isGliding` | Glide active |
+| `isDashing` | Dash active |
+| `isSprinting` | Sprint active |
+| `isAiming` | Bow aim mode on |
+| `isShooting` | Shoot animation playing |
 
-combatInputHandler.cs - Input flags for aim/shoot and combat state signalling.
+### Triggers
 
-combatController.cs - Weapon equip/unequip, aiming params, arrow spawning + force, camera switching integration.
+Optional attack triggers — depends on your Animator controller setup.
 
-cameraHandler.cs - Cinemachine FreeLook priority switching (main vs aiming).
+---
 
-arrowHandler.cs - Basic arrow lifecycle (cleanup + impact behaviour).
+## Configuration & Tuning
 
-Animator Parameters (Expected)
-Floats
+All of these are exposed in the Inspector:
 
-xInput
+| Category | Variables |
+|---|---|
+| **Speed** | `walkSpeed`, `sprintSpeed`, `crouchSpeed` |
+| **Jump / Gravity** | `jumpHeight`, `gravity`, `glideGravity` |
+| **Dash** | `dashSpeed`, `dashDuration`, `dashCooldownTime` |
+| **Ground Detection** | `groundDetectionRadius`, `groundDetectionHeight`, `groundLayer` |
+| **Combat** | `shootSpeed` |
 
-yInput
+---
 
-Bools
+## Asset Store Packages Used
 
-isCrouching
+Import via `Window → Package Manager → My Assets`:
 
-isJumping
+- VFX URP - Fire Package
+- AOE Explosions Pack 2
+- Dragon for Boss Monster : PBR
+- RPG - Stylized Fantasy Environment
+- Free Quick Effects Vol. 1
+- Status Effects and Auras FREE
+- Stylized Fantasy Sword (PBR)
+- Lowpoly Magician RIO
+- Lowpoly Cowboy RIO V1.1
+- FREE Low Poly Human - RPG Character
+- Melee Warrior Animations FREE
 
-isFalling
+---
 
-isGliding
+## Tutorials Referenced
 
-isDashing
+A mix of tutorials that helped shape specific systems in this project:
 
-isSprinting
+- [Third Person Movement in Unity](https://www.youtube.com/watch?v=4HpC--2iowE&t=313s)
+- [Cinemachine Setup](https://www.youtube.com/watch?v=_J8RPIaO2Lc)
+- [Animation Blend Trees](https://www.youtube.com/watch?v=muAzcpAg3lg&list=WL&index=27)
+- [CharacterController Movement](https://www.youtube.com/watch?v=S_USClc_r5c)
+- [Dash & Cooldown](https://www.youtube.com/watch?v=tD4tR7zO8y0)
+- [Melee Combat](https://www.youtube.com/watch?v=78J493qWfDI)
+- [Bow / Archery System](https://www.youtube.com/watch?v=zc8ac_qUXQY&t=531s)
+- [Enemy AI](https://www.youtube.com/watch?v=0KDU_SzrCkA&t=224s)
+- [Finite State Machines](https://www.youtube.com/watch?v=XOjd_qU2Ido&t=900s)
+- [Animator Controller](https://www.youtube.com/watch?v=BLfNP4Sc_iA&t=496s)
+- [URP Setup](https://www.youtube.com/watch?v=xWMQIozp6YE)
+- [Cinemachine Camera Switching](https://www.youtube.com/watch?v=b-WZEBLNCik)
+- [Glide Mechanic](https://www.youtube.com/watch?v=eR-AGr5nKEU)
+- [Player State Management](https://www.youtube.com/watch?v=jnETyJUiCiM)
+- [RPG Systems Playlist](https://www.youtube.com/playlist?list=PLllNmP7eq6TSkwDN8OO0E8S6CWybSE_xC)
 
-isAiming
+---
 
-isShooting
+## Troubleshooting
 
-Triggers
+| Issue | Fix |
+|---|---|
+| Missing prefab references / broken scene objects | Import the Asset Store packages listed above |
+| Pink / magenta materials | URP isn't configured correctly — re-import URP packages and check your Graphics settings |
+| Cinemachine not switching on aim | Check that both FreeLook cameras are assigned in `cameraHandler` and that priority values are distinct |
 
-Optional attack triggers (if used by your controller)
+---
 
-Configuration / Tuning
+## Author
 
-Common values to tweak in the Inspector:
+**Shawn Santan D'Souza**
 
-walkSpeed, sprintSpeed, crouchSpeed
-
-jumpHeight, gravity, glideGravity
-
-dashSpeed, dashDuration, dashCooldownTime
-
-groundDetectionRadius, groundDetectionHeight, groundLayer
-
-shootSpeed
-
-Asset Store Packages Used
-
-The following Asset Store packages are used by this project and must be acquired/imported separately:
-
-VFX URP - Fire Package
-
-AOE Explosions Pack 2
-
-Dragon for Boss Monster : PBR
-
-RPG - Stylized Fantasy Environment
-
-Free Quick Effects Vol. 1
-
-Status Effects and Auras FREE
-
-Stylized Fantasy Sword (PBR)
-
-Lowpoly Magician RIO
-
-Lowpoly Cowboy RIO V1.1
-
-FREE Low Poly Human - RPG Character
-
-Melee Warrior Animations FREE
-
-Tutorials Referenced
-
-https://www.youtube.com/watch?v=4HpC--2iowE&t=313s
-
-https://www.youtube.com/watch?v=_J8RPIaO2Lc
-
-https://www.youtube.com/watch?v=muAzcpAg3lg&list=WL&index=27
-
-https://www.youtube.com/watch?v=S_USClc_r5c
-
-https://www.youtube.com/watch?v=tD4tR7zO8y0
-
-https://www.youtube.com/watch?v=78J493qWfDI
-
-https://www.youtube.com/watch?v=zc8ac_qUXQY&t=531s
-
-https://www.youtube.com/watch?v=0KDU_SzrCkA&t=224s
-
-https://www.youtube.com/watch?v=XOjd_qU2Ido&t=900s
-
-https://www.youtube.com/watch?v=BLfNP4Sc_iA&t=496s
-
-https://www.youtube.com/watch?v=xWMQIozp6YE
-
-https://www.youtube.com/watch?v=b-WZEBLNCik
-
-https://www.youtube.com/watch?v=eR-AGr5nKEU
-
-https://www.youtube.com/watch?v=jnETyJUiCiM
-
-https://www.youtube.com/playlist?list=PLllNmP7eq6TSkwDN8OO0E8S6CWybSE_xC
-
-Troubleshooting
-
-Missing prefabs / missing references: Import the Asset Store packages listed above (Window -> Package Manager -> My Assets).
-
-Pink materials / shaders: Confirm URP is set up correctly and re-import URP-related packages if needed.
-
-Cinemachine camera not switching: Ensure both FreeLook cameras are assigned in cameraHandler and priorities are set correctly.
-
-License
-
-No license is applied by default. If you want others to reuse your code, consider adding an MIT License.
-
-Author / Contact
-
-Shawn Santan D’Souza
-GitHub: https://github.com/shawn-d123
-
-LinkedIn: https://www.linkedin.com/in/shawn-dsouza-08b6273b0
-
-Email: dsouzashawn305@gmail.com
-
-
-### If bullets still don’t paste correctly
-That’s usually because you’re pasting into something like Word/Notes first, or your browser is converting characters.
-
-**Fix:** Paste directly into GitHub’s README editor, or into VS Code, then into GitHub.
-
-If you tell me **where** you’re pasting it (GitHub editor / VS Code / Notepad / Word), I’ll give you the exact fix for that one.
+[![GitHub](https://img.shields.io/badge/GitHub-shawn--d123-181717?logo=github)](https://github.com/shawn-d123)
+[![LinkedIn](https://img.shields.io/badge/LinkedIn-Shawn%20D'Souza-0077B5?logo=linkedin)](https://www.linkedin.com/in/shawn-dsouza-08b6273b0)
+[![Email](https://img.shields.io/badge/Email-dsouzashawn305%40gmail.com-D14836?logo=gmail)](mailto:dsouzashawn305@gmail.com)
