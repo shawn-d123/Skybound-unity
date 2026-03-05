@@ -4,7 +4,7 @@
 ![C#](https://img.shields.io/badge/C%23-.NET-blue?logo=csharp)
 ![URP](https://img.shields.io/badge/Render%20Pipeline-URP-purple)
 ![Status](https://img.shields.io/badge/Status-Prototype-informational)
-![License](https://img.shields.io/badge/License-Unlicensed-lightgrey)
+![License](https://img.shields.io/badge/License-MIT-green)
 
 A Unity 3D third-person RPG prototype written in C#. The focus of this project was building a clean, modular architecture around player movement, melee and archery combat, Cinemachine camera handling, and enemy AI using finite state machines — less about visual polish, more about getting the systems right.
 
