@@ -6,6 +6,10 @@
 ![Status](https://img.shields.io/badge/Status-Prototype-informational)
 ![License](https://img.shields.io/badge/License-MIT-green)
 
+### WORLD DESIGN
+https://github.com/user-attachments/assets/0c8722ec-2943-45d1-a3a0-469233e637a4
+
+
 A Unity 3D third-person RPG prototype written in C#. The focus of this project was building a clean, modular architecture — covering player movement, class-based abilities, melee and archery combat, enemy AI using finite state machines, RPG-style progression, and a full account and world save system. Less about visual polish, more about getting the systems right.
 
 ---
@@ -65,6 +69,10 @@ Built on Unity's `CharacterController`. Movement is camera-relative with a full 
 ---
 
 ## Player Classes
+
+### Mage Class
+https://github.com/user-attachments/assets/e3055282-49c2-47f3-9028-948e7b4c127b
+
 
 Each world is tied to exactly one class — **Mage** or **Assassin** — chosen at world creation and locked for that playthrough. This is intentional: it keeps builds distinct and gives players a reason to create multiple worlds.
 
@@ -230,6 +238,10 @@ Open the Start-Up Screen scene and press Play.
 ---
 
 ## Enemy AI
+
+### BOSS ENEMY
+https://github.com/user-attachments/assets/50c4663e-eb09-4448-9288-1509d9609595
+
 
 Enemies are driven by finite state machines, keeping each behaviour isolated and easy to extend without touching unrelated logic.
 
