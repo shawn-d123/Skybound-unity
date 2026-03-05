@@ -6,7 +6,7 @@
 ![Status](https://img.shields.io/badge/Status-Prototype-informational)
 ![License](https://img.shields.io/badge/License-MIT-green)
 
-A Unity 3D third-person RPG prototype written in C#. The focus of this project was building a clean, modular architecture around player movement, melee and archery combat, Cinemachine camera handling, and enemy AI using finite state machines — less about visual polish, more about getting the systems right.
+A Unity 3D third-person RPG prototype written in C#. The focus of this project was building a clean, modular architecture — covering player movement, class-based abilities, melee and archery combat, enemy AI using finite state machines, RPG-style progression, and a full account and world save system. Less about visual polish, more about getting the systems right.
 
 ---
 
@@ -17,9 +17,14 @@ A Unity 3D third-person RPG prototype written in C#. The focus of this project w
 ## Table of Contents
 
 - [Features](#features)
+- [Player Classes](#player-classes)
+- [Player Stats & Progression](#player-stats--progression)
+- [Screens & Game Flow](#screens--game-flow)
+- [Worlds & Saving](#worlds--saving)
 - [Tech Stack](#tech-stack)
 - [Getting Started](#getting-started)
 - [Controls](#controls)
+- [Enemy AI](#enemy-ai)
 - [Project Structure](#project-structure)
 - [Animator Parameters](#animator-parameters)
 - [Configuration & Tuning](#configuration--tuning)
@@ -57,10 +62,84 @@ Built on Unity's `CharacterController`. Movement is camera-relative with a full 
 - Centralised animation controller keeps state flags consistent across systems
 - Clean separation between what triggers an animation and what the animation does
 
-### Enemy AI
-- FSM-based AI — each state is isolated, which makes adding new behaviours straightforward
-- Base flow: `Chase → Range Check → Attack Selection → Cooldown`
-- Built to scale — the same structure handles basic enemies and can be extended for boss logic
+---
+
+## Player Classes
+
+Each world is tied to exactly one class — **Mage** or **Assassin** — chosen at world creation and locked for that playthrough. This is intentional: it keeps builds distinct and gives players a reason to create multiple worlds.
+
+### Assassin
+
+**Q — Invisibility**
+Temporarily removes the player from enemy detection. Implemented by toggling the detection conditions in the enemy AI while the ability window is active — enemies mid-chase will disengage and return to patrol.
+
+**C — Backstab** *(Ultimate — unlocks at Level 10)*
+Position-dependent finisher. Requires the player to be behind the enemy and within close range. Deals high burst damage and is designed as the Assassin's primary kill tool in most encounters.
+
+### Mage
+
+**Q — Heal**
+Instantly restores a portion of the player's health. Has a cooldown to prevent spam — intended as a survivability tool, not a crutch.
+
+**C — Magic Ball** *(Ultimate — unlocks at Level 10)*
+Fires a ranged magic projectile toward a target direction. Gives the Mage a reliable mid-range damage option that complements the bow or fills in when enemies are at range.
+
+> Abilities use cooldown timers and state checks — level requirement gates, positioning checks for Backstab — to keep them predictable and balanced without needing complex tuning.
+
+---
+
+## Player Stats & Progression
+
+Stats persist per world and drive the core RPG loop:
+
+| Stat | Notes |
+|---|---|
+| **Health** | Displayed via UI bar |
+| **Stamina** | Displayed via UI bar |
+| **XP + Level** | XP bar with level progression |
+| **Money / Currency** | Earned through gameplay, used for progression |
+
+Defeating enemies grants XP → XP increases level → level unlocks stronger tools, including ultimate abilities at Level 10.
+
+---
+
+## Screens & Game Flow
+
+The project has a full menu-driven flow from launch through to gameplay:
+
+**Start-Up Screen** — entry point and navigation into authentication.
+
+**Sign-Up Screen** — creates a new local account and stores it for future logins.
+
+**Log-In Screen** — validates credentials and loads the account data.
+
+**World Creation Screen** — player enters a world name and selects a class (Mage or Assassin). Generating the world creates a new save and loads the game scene with that world's data.
+
+**World Selection Screen** — displays all worlds saved under the logged-in account. Selecting one loads that world's class, stats, and progress.
+
+**In-Game Menu (ESC)** — pauses the game and opens a pause menu. Closing it resumes exactly where the player left off.
+
+**Game Over Screen** — triggered on player death. Provides options to return to the menu or restart depending on build state.
+
+---
+
+## Worlds & Saving
+
+The game supports multiple saved worlds under a single account — each world is a fully independent playthrough.
+
+### Creating a World
+After logging in, the player creates a new world by entering a name and selecting a class. From that point, the world has its own isolated save file.
+
+### What Gets Saved Per World
+- Selected class
+- Player level and XP
+- Health and stamina progression
+- Money / currency
+
+### Loading a World
+The World Selection Screen dynamically pulls all worlds linked to the active account. Selecting one loads the correct save file and spawns the player with the right class and stats already applied.
+
+> Persistence is handled using local file-based saving (JSON). Each world's data is kept separate so multiple playthroughs can exist without overwriting each other.
 
 ---
 
@@ -74,6 +153,7 @@ Built on Unity's `CharacterController`. Movement is camera-relative with a full 
 | **Camera** | Cinemachine |
 | **Animation** | Animator + Blend Trees |
 | **Movement** | CharacterController |
+| **Persistence** | Local JSON save files |
 
 ---
 
@@ -127,10 +207,10 @@ Open the Start-Up Screen scene and press Play.
 | `Left Shift` | Sprint |
 | `Space` | Jump |
 | `Hold Space` *(airborne)* | Glide |
-| `C` | Toggle crouch |
+| `C` | Toggle crouch / Backstab *(Assassin ultimate — replaces crouch)* |
 | `E` | Dash |
 
-### Combat
+### Combat & Weapons
 
 | Input | Action |
 |---|---|
@@ -139,6 +219,46 @@ Open the Start-Up Screen scene and press Play.
 | `3` | Equip bow |
 | `RMB` | Aim |
 | `LMB` *(while aiming)* | Shoot |
+
+### Class Abilities
+
+| Input | Mage | Assassin |
+|---|---|---|
+| `Q` | Heal | Invisibility |
+| `C` | Magic Ball *(Level 10)* | Backstab *(Level 10)* |
+
+---
+
+## Enemy AI
+
+Enemies are driven by finite state machines, keeping each behaviour isolated and easy to extend without touching unrelated logic.
+
+### Core Behaviour
+
+Enemies operate within a defined zone — if the player leaves the zone or the chase runs too long, the enemy disengages and returns to its spawn point. Behaviour is primarily distance-driven:
+
+- **Mid-range:** use ranged ability if available, then begin chasing
+- **Close-range:** prioritise melee attacks
+
+The goal was for AI to feel reactive rather than scripted — transitions between roam, chase, and attack happen naturally based on distance and cooldown state rather than fixed triggers.
+
+### Combat & Cooldowns
+
+- A **global cooldown** blocks certain actions for a short window after any attack fires
+- Individual attacks also carry their own cooldown timers
+- If a ranged attack is on cooldown, the enemy continues chasing to force close-range engagement rather than standing and waiting
+
+### Animation-Driven Attacks
+
+Hit colliders are enabled and disabled at the correct frames by the Animator, keeping the damage timing tied directly to the animation rather than hardcoded delays. Ranged projectiles can be spawned via animation events, which keeps visuals and logic cleanly separated.
+
+### Scaling to Bosses
+
+The FSM structure was designed with this in mind from the start. Stronger enemies and bosses extend the same base with:
+
+- Multiple attack types with different range requirements
+- Priority-based selection — pick the best available attack based on distance and cooldown state
+- Repositioning logic if the chosen attack requires a specific range
 
 ---
 
@@ -248,6 +368,7 @@ A mix of tutorials that helped shape specific systems in this project:
 | Missing prefab references / broken scene objects | Import the Asset Store packages listed above |
 | Pink / magenta materials | URP isn't configured correctly — re-import URP packages and check your Graphics settings |
 | Cinemachine not switching on aim | Check that both FreeLook cameras are assigned in `cameraHandler` and that priority values are distinct |
+| World save not loading correctly | Check that the JSON save files exist in the expected path and that the world name matches exactly |
 
 ---
 
